@@ -20,23 +20,24 @@ export default async function handler(req, res) {
     const lodgifyResponse = await fetch(lodgifyUrl, {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${process.env.LODGIFY_API_KEY}`
+        'Authorization': `Bearer ${process.env.LODGIFY_API_KEY}`,
+        'Content-Type': 'application/json'
       }
     });
 
-    const lodgifyText = await lodgifyResponse.text(); // ← get the raw text
+    const lodgifyText = await lodgifyResponse.text(); // read raw text
+    console.log('Raw Lodgify Response:', lodgifyText);
 
-    console.log('LODGIY RAW RESPONSE:', lodgifyText); // ← log it to Vercel
-    console.log('LODGIY STATUS:', lodgifyResponse.status); // ← also log status code
-
-    if (!lodgifyResponse.ok) {
-      return res.status(lodgifyResponse.status).json({ error: lodgifyText });
+    if (!lodgifyText) {
+      console.error('Empty response from Lodgify API.');
+      return res.status(502).json({ error: 'Empty response from Lodgify API.' });
     }
 
-    const data = JSON.parse(lodgifyText);
+    const data = JSON.parse(lodgifyText); // only parse if there is text
     return res.status(200).json(data);
+    
   } catch (error) {
-    console.error('Error contacting Lodgify API:', error);
+    console.error('Error contacting Lodgify API:', error.message);
     return res.status(500).json({ error: 'Error contacting Lodgify API.' });
   }
 }
