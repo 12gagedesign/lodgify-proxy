@@ -6,7 +6,7 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow any domain to access
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -21,7 +21,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization': 'Bearer YOUR_API_KEY', // Uncomment and add your Lodgify API key if required
+        'Authorization': `Bearer ${process.env.LODGIFY_API_KEY}` // <<< important
       },
       body: JSON.stringify({
         periodStart,
