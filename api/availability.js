@@ -21,6 +21,7 @@ async function handler(req, res) {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
+        'Authorization': `Bearer ${process.env.LODGIFY_API_KEY}` // <<< THIS is what you need
       }
     });
 
