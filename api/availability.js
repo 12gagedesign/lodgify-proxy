@@ -1,5 +1,3 @@
-// api/availability.js
-
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', ['GET']);
@@ -17,16 +15,14 @@ export default async function handler(req, res) {
   }
 
   try {
-    const lodgifyResponse = await fetch(`https://api.lodgify.com/v2/availability/${propertyId}`, {
-      method: 'POST',
+    // SEND as GET with query string (NOT POST with body)
+    const lodgifyUrl = `https://api.lodgify.com/v2/availability/${propertyId}?periodStart=${periodStart}&periodEnd=${periodEnd}`;
+
+    const lodgifyResponse = await fetch(lodgifyUrl, {
+      method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.LODGIFY_API_KEY}` // <<< important
-      },
-      body: JSON.stringify({
-        periodStart,
-        periodEnd
-      })
+        'Authorization': `Bearer ${process.env.LODGIFY_API_KEY}`
+      }
     });
 
     const data = await lodgifyResponse.json();
