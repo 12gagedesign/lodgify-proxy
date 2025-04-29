@@ -15,7 +15,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // SEND as GET with query string (NOT POST with body)
     const lodgifyUrl = `https://api.lodgify.com/v2/availability/${propertyId}?periodStart=${periodStart}&periodEnd=${periodEnd}`;
 
     const lodgifyResponse = await fetch(lodgifyUrl, {
@@ -25,7 +24,16 @@ export default async function handler(req, res) {
       }
     });
 
-    const data = await lodgifyResponse.json();
+    const lodgifyText = await lodgifyResponse.text(); // ← get the raw text
+
+    console.log('LODGIY RAW RESPONSE:', lodgifyText); // ← log it to Vercel
+    console.log('LODGIY STATUS:', lodgifyResponse.status); // ← also log status code
+
+    if (!lodgifyResponse.ok) {
+      return res.status(lodgifyResponse.status).json({ error: lodgifyText });
+    }
+
+    const data = JSON.parse(lodgifyText);
     return res.status(200).json(data);
   } catch (error) {
     console.error('Error contacting Lodgify API:', error);
