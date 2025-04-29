@@ -1,13 +1,19 @@
+// api/availability.js
 
 export default async function handler(req, res) {
-  if (req.method !== 'POST') {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', ['GET']);
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { propertyId, periodStart, periodEnd } = req.body;
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Allow any domain to access
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  const { propertyId, periodStart, periodEnd } = req.query;
 
   if (!propertyId || !periodStart || !periodEnd) {
-    return res.status(400).json({ error: 'Missing parameters' });
+    return res.status(400).json({ error: 'Missing required query parameters.' });
   }
 
   try {
@@ -15,17 +21,18 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        // Add Authorization here if needed
+        // 'Authorization': 'Bearer YOUR_API_KEY', // Uncomment and add your Lodgify API key if required
       },
       body: JSON.stringify({
         periodStart,
-        periodEnd,
-      }),
+        periodEnd
+      })
     });
 
     const data = await lodgifyResponse.json();
     return res.status(200).json(data);
   } catch (error) {
-    return res.status(500).json({ error: 'Error contacting Lodgify API', details: error.message });
+    console.error('Error contacting Lodgify API:', error);
+    return res.status(500).json({ error: 'Error contacting Lodgify API.' });
   }
 }
