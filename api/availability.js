@@ -8,14 +8,14 @@ async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  const { propertyId, includeDetails = 'false' } = req.query;
+  const { propertyId } = req.query;
 
   if (!propertyId) {
     return res.status(400).json({ error: 'Missing propertyId parameter.' });
   }
 
   try {
-    const lodgifyUrl = `https://api.lodgify.com/v2/availability/${propertyId}?includeDetails=${includeDetails}`;
+    const lodgifyUrl = `https://api.lodgify.com/v2/availability/${propertyId}?includeDetails=false`;
 
     const lodgifyResponse = await fetch(lodgifyUrl, {
       method: 'GET',
@@ -33,10 +33,11 @@ async function handler(req, res) {
 
     const data = JSON.parse(lodgifyText);
     return res.status(200).json(data);
+    
   } catch (error) {
     console.error('Error contacting Lodgify API:', error.message);
     return res.status(500).json({ error: 'Error contacting Lodgify API.' });
   }
 }
 
-module.exports = handler;  // 👈 this line is the important change
+module.exports = handler;
