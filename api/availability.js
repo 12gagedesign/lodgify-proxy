@@ -21,11 +21,10 @@ async function handler(req, res) {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${process.env.LODGIFY_API_KEY}`
+        'X-ApiKey': process.env.LODGIFY_API_KEY 
       }
     });
 
-    // 🔒 Gracefully handle 403 forbidden from Lodgify
     if (lodgifyResponse.status === 403) {
       return res.status(403).json({ error: 'Lodgify API key unauthorized (403)' });
     }
