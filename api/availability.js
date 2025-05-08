@@ -8,20 +8,20 @@ async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  const { propertyId } = req.query;
+  const { propertyId, start, end } = req.query;
 
-  if (!propertyId) {
-    return res.status(400).json({ error: 'Missing propertyId parameter.' });
+  if (!propertyId || !start || !end) {
+    return res.status(400).json({ error: 'Missing propertyId, start, or end parameter.' });
   }
 
   try {
-    const lodgifyUrl = `https://api.lodgify.com/v2/availability/${propertyId}?includeDetails=false`;
+    const lodgifyUrl = `https://api.lodgify.com/v2/availability/${propertyId}?start=${start}&end=${end}&includeDetails=true`;
 
     const lodgifyResponse = await fetch(lodgifyUrl, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'X-ApiKey': process.env.LODGIFY_API_KEY 
+        'X-ApiKey': process.env.LODGIFY_API_KEY
       }
     });
 
